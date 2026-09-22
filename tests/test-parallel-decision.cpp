@@ -12,6 +12,20 @@ static bool near(double actual, double expected) {
 }
 
 int main() {
+    llama_decision::prefix_state_cache cache(2);
+    cache.put({ 1 }, { 11 });
+    cache.put({ 2 }, { 22 });
+    assert(cache.size() == 2);
+    assert(cache.find({ 1 }) && cache.find({ 1 })->at(0) == 11);
+    cache.put({ 3 }, { 33 });
+    assert(cache.size() == 2);
+    assert(cache.find({ 2 }) == nullptr); // entry 1 was refreshed, so entry 2 was evicted
+    assert(cache.find({ 1 }) && cache.find({ 3 }));
+
+    llama_decision::prefix_state_cache disabled(0);
+    disabled.put({ 1 }, { 11 });
+    assert(disabled.size() == 0);
+
     const common_json schema = common_json::parse(R"({
         "route": {
             "type": "enum",
