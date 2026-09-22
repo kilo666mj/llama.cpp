@@ -84,9 +84,9 @@ curl http://localhost:8096/v1/decision -H "Content-Type: application/json" -d '{
     {
       "decision": {"category": "billing", "urgent": true, "priority": "high"},
       "fields": {
-        "category": {"value": "billing",  "probability": 1.0,  "scored_nodes": 1, "tree": true},
-        "urgent":   {"value": true,       "probability": 1.0,  "scored_nodes": 1, "tree": true},
-        "priority": {"value": "high",     "probability": 0.74, "scored_nodes": 1, "tree": true}
+        "category": {"value": "billing",  "probability": 1.0,  "probabilities": {"billing": 1.0, "technical": 0.0, "cancellation": 0.0, "other": 0.0}, "scored_nodes": 1, "tree": true},
+        "urgent":   {"value": true,       "probability": 1.0,  "probabilities": {"true": 1.0, "false": 0.0}, "scored_nodes": 1, "tree": true},
+        "priority": {"value": "high",     "probability": 0.74, "probabilities": {"low": 0.01, "medium": 0.20, "high": 0.74, "critical": 0.05}, "scored_nodes": 1, "tree": true}
       },
       "usage": {"context_tokens": 21, "scored_rows": 14}
     }
@@ -97,6 +97,10 @@ curl http://localhost:8096/v1/decision -H "Content-Type: application/json" -d '{
 ```
 
 (That response is a real one: Gemma 4 12B on an RTX 3060, warm cache.)
+
+In `tree` mode, and in `auto` mode for fields that stay under `tree_max`, each field also returns the complete exact
+constrained distribution in `probabilities`. Greedy fields omit it because their unvisited branches do not have exact
+probabilities. Keys are the JSON values rendered as strings (`"true"`, `"7"`, `"0.5"`, or the enum value).
 
 ### Schema
 

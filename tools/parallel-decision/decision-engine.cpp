@@ -716,6 +716,16 @@ common_json assemble(const compiled_schema & cs, const result & r) {
         decision[sp.name] = sp.values[idx];
         f["value"]        = sp.values[idx];
         f["probability"]  = (double) (fr.probs.size() == sp.values.size() ? fr.probs[idx] : fr.path_score);
+        if (fr.probs.size() == sp.values.size()) {
+            common_json probabilities = common_json::object();
+            for (size_t k = 0; k < sp.values.size(); ++k) {
+                const std::string key = sp.values[k].is_string()
+                    ? sp.values[k].get<std::string>()
+                    : sp.values[k].dump();
+                probabilities[key] = (double) fr.probs[k];
+            }
+            f["probabilities"] = std::move(probabilities);
+        }
         f["scored_nodes"] = fr.scored_nodes;
         f["tree"]         = fr.tree;
         fields[sp.name]   = f;
