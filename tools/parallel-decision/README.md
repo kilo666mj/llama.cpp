@@ -25,6 +25,10 @@ cmake --build build --config Release -j
 in flight, the rest are the parallel questions. It also switches the KV cache to unified, which is what lets the
 branches share the context's cells.
 
+`--decision-prefix-cache N` retains up to N exact prompt-prefix snapshots in host memory (default 4). Alternating
+schemas can therefore restore their KV state without re-prefilling or consuming additional decision sequences. Set it
+to 0 to keep only the currently active KV prefix.
+
 ```bash
 ./build/bin/llama-server -m model.gguf -ngl 99 -fa on -c 32768 --decision-seqs 24 --port 8096
 ```
