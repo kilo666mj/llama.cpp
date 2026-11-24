@@ -30,6 +30,7 @@ using tokens_t = std::vector<llama_token>;
 class prefix_state_cache {
   public:
     explicit prefix_state_cache(size_t capacity);
+    bool enabled() const { return capacity != 0; }
 
     const std::vector<uint8_t> * find(const tokens_t & tokens);
     void put(tokens_t tokens, std::vector<uint8_t> state);
@@ -122,6 +123,7 @@ class engine {
     llama_memory_t      mem;
     llama_seq_id        seq_snap, seq_pool;
     int                 n_pool;
+    bool                pad_branches; // recurrent/hybrid model: branches in a decode need equal lengths
     tokens_t            cached;
     prefix_state_cache  prefix_cache;
 
